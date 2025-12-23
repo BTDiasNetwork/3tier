@@ -1,22 +1,30 @@
 all:
-  vars:
-    # The generated inventory is assumed to be used from the clab host.
-    # Hence no http proxy should be used. Therefore we make sure the http
-    # module does not attempt using any global http proxy.
-    ansible_httpapi_use_proxy: false
   children:
-    huawei_vrp:
+    junos:
+      vars:
+        ansible_network_os: junipernetworks.junos.junos
+        ansible_connection: ansible.netcommon.netconf
+      hosts:
+        SWACE-13720-lab:
+          ansible_host: 198.18.0.145
+        SWACE-13320-lab:
+          ansible_host: 198.18.0.146
+        SWDMZ-13328-lab:
+          ansible_host: 198.18.0.147
+        SWGER-13536-lab:
+          ansible_host: 198.18.0.148
+    huawei:
       vars:
         ansible_connection: ansible.netcommon.netconf
         ansible_network_os: community.network.ce
       hosts:
-        clab-ano__huawei-core01:
-          ansible_host: 172.20.20.11
-        clab-ano__huawei-dst1:
-          ansible_host: 172.20.20.12
-        clab-ano__huawei-dst2:
-          ansible_host: 172.20.20.13
-        clab-ano__huawei-dst3:
-          ansible_host: 172.20.20.14
-        clab-ano__huawei-dst4:
-          ansible_host: 172.20.20.15
+        SWCOR-11313-lab:
+          ansible_host: 198.18.0.140
+        SWDST-10422-lab:
+          ansible_host: 198.18.0.141
+        SWDST-11438-lab:
+          ansible_host: 198.18.0.142
+        SWDST-10322-lab:
+          ansible_host: 198.18.0.143
+        SWDST-13824-lab:
+          ansible_host: 198.18.0.144
