@@ -1,0 +1,43 @@
+---
+
+# (Mutable)
+cliente_name: AUTONETOPS
+
+# Internal Vlan (Mutable)
+vlan_id_internal: 200
+
+# Internal Vlan Name (IMMUTABLE)
+vlan_id_internal_name: "VLN-{{ vlan_id_internal }}-{{ cliente_name }}-INT"
+
+# SVI Internal Vlan (Mutable) | Do not specify CIDR, by default /24
+vlan_id_internal_l3_ip_addr: 10.101.200.254
+
+########################################################
+
+# Transit Vlan (Mutable)
+vlan_id_transit: 400
+
+# Transit Vlan Name (IMMUTABLE)
+vlan_id_transit_name: "VLN-{{ vlan_id_transit }}-{{ cliente_name }}-TRAN"
+
+# SVI Transit Vlan (Mutable) | Do not specify CIDR, by default /30
+vlan_id_transit_l3_ipaddr: 100.64.80.1
+
+########################################################
+
+# VRF NAME (Mutable)
+vrf_name: AUTONETOPS
+
+# Endereço deve ser o IP configurado no FW BORD (Mutable)
+vrf_next_hop: 100.64.80.2
+
+# BGP Process SW-CORE (IMMUTABLE)
+bgp_asn: 65001
+route_policy: RP_DENY-CGNAT_DC
+
+# (IMMUTABLE)
+#Atributos iguals, criar valor global e utilizar nos módulos apropriados. Endereço global vrf_attributes:#
+#vrf_rd: 1:1198
+#vrf_rt_export: 1:1198
+vrf_attributes: "1:{{ vlan_id_internal }}"
+vrf_routetarget_import: 1:1900
