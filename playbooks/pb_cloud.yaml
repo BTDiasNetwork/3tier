@@ -1,13 +1,32 @@
 ---
-- name: Provisionamento de Clientes
+- name: Provisionamento de Cliente Cloud
   hosts: all
   gather_facts: no
 
 
   tasks:
 
+ # Criar Internal Vlan (L2) | DEVICES JUNIPER
+  - name: Merge provided Junos vlans config with running-config
+    junipernetworks.junos.junos_vlans:
+      config:
+        - name: "{{ vlan_id_internal_name }}"
+          vlan_id: "{{ vlan_id_internal }}"
+      state: merged
+    tags: junos
+    when: ansible_network_os == 'junipernetworks.junos.junos'
 
-  # Criar Internal Vlan (L2)
+ # Criar Transit Vlan (L2) | DEVICES JUNIPER
+  - name: Merge provided Junos vlans config with running-config
+    junipernetworks.junos.junos_vlans:
+      config:
+        - name: "{{ vlan_id_transit_name }}"
+          vlan_id: "{{ vlan_id_transit }}"
+      state: merged
+    tags: junos
+    when: ansible_network_os == 'junipernetworks.junos.junos'
+
+  # Criar Internal Vlan (L2) | DEVICES HUAWEI
   - name: Create VLAN Internal [Devices Huawei]
     ce_vlan:
       vlan_id: "{{ vlan_id_internal }}"
@@ -16,7 +35,7 @@
     tags: compliance
     when: ansible_network_os == 'community.network.ce'
 
-  # Criar Transit Vlan (L2)
+  # Criar Transit Vlan (L2) | DEVICES HUAWEI
   - name: Create Vlan Transit [Devices Huawei]
     ce_vlan:
       vlan_id: "{{ vlan_id_transit }}"
@@ -31,8 +50,8 @@
       vrf: "{{ vrf_name }}"
       state: present
     tags: compliance
-    when:
-      - inventory_hostname == 'clab-ano__huawei-core01'
+    when: 
+      - inventory_hostname == 'SWCOR-11313-LAB'
 
   # Config VRF Cliente com RD, RT-EXPORT - Format vrf_attributes: "1:{{ vlan_id_internal }}"
   - name: Config VRF, AF1 Unicast, RD e RT-EXPORT
@@ -45,8 +64,8 @@
       vpn_target_state: present
       state: present
     tags: compliance
-    when:
-      - inventory_hostname == 'clab-ano__huawei-core01'
+    when: 
+      - inventory_hostname == 'SWCOR-11313-LAB'
 
 # Config VRF Cliente com RD, RT-IMPORT 1:1900 (Redes Monitoramento etc)
   - name: Config VRF, AFI-1 Unicast, RD e RT-IMPORT 1:1900
@@ -56,10 +75,10 @@
       vrf_aftype: v4
       vpn_target_type: import_extcommunity
       vpn_target_value: "{{ vrf_routetarget_import }}"
-      vpn_target_state: present
+      vpn_target_state: present 
     tags: compliance
-    when:
-      - inventory_hostname == 'clab-ano__huawei-core01'
+    when: 
+      - inventory_hostname == 'SWCOR-11313-LAB'
 
 # Criando SVI [Internal VLAN]
   - name: Criando SVI [Internal VLAN]
@@ -67,7 +86,7 @@
       interface: "Vlanif{{ vlan_id_internal }}"
       state: present
     tags: compliance
-    when:
+    when: 
       - inventory_hostname == 'SWCOR-11313-LAB'
 
 # Alocando SVI a VRF [Internal VLAN]
@@ -77,8 +96,8 @@
       vrf: "{{ vrf_name }}"
       state: present
     tags: compliance
-    when:
-      - inventory_hostname == 'clab-ano__huawei-core01'
+    when: 
+      - inventory_hostname == 'SWCOR-11313-LAB'
 
 # Endereçando SVI [Internal VLAN]
   - name: Endereçando SVI [Internal VLAN]
@@ -89,8 +108,8 @@
       addr: "{{ vlan_id_internal_l3_ip_addr }}"
       mask: 24
     tags: compliance
-    when:
-      - inventory_hostname == 'clab-ano__huawei-core01'
+    when: 
+      - inventory_hostname == 'SWCOR-11313-LAB'
 
 # Criando SVI [Transit VLAN]
   - name: Criando SVI [Transit VLAN]
@@ -98,8 +117,8 @@
       interface: "Vlanif{{ vlan_id_transit }}"
       state: present
     tags: compliance
-    when:
-      - inventory_hostname == 'clab-ano__huawei-core01'
+    when: 
+      - inventory_hostname == 'SWCOR-11313-LAB'
 
 # Alocando SVI a VRF [Transit VLAN]
   - name: Alocando SVI a VRF [Transit VLAN]
@@ -108,8 +127,8 @@
       vrf: "{{ vrf_name }}"
       state: present
     tags: compliance
-    when:
-      - inventory_hostname == 'clab-ano__huawei-core01'
+    when: 
+      - inventory_hostname == 'SWCOR-11313-LAB'
 
 # Endereçando SVI [Transit VLAN]
   - name: Endereçando SVI [Transit VLAN]
@@ -120,8 +139,8 @@
       addr: "{{ vlan_id_transit_l3_ipaddr }}"
       mask: 30
     tags: compliance
-    when:
-      - inventory_hostname == 'clab-ano__huawei-core01'
+    when: 
+      - inventory_hostname == 'SWCOR-11313-LAB'
 
 # NEXT_HOP deve ser o firewall de borda do DC
   - name: Criando Rota Estatica Default VRF para FW-BORD DC
@@ -135,14 +154,14 @@
       destvrf: "{{ vrf_name }}"
       state: present
     tags: compliance
-    when:
-      - inventory_hostname == 'clab-ano__huawei-core01'
+    when: 
+      - inventory_hostname == 'SWCOR-11313-LAB'
 
 # Módulos NETCONF não suportam a intent, necessário utilizar módulo CLI
   - name: Redistribuir rede direct no BGP [VRF CLIENTE] (única task usando CLI)
     vars:
-      ansible_connection: ansible.netcommon.network_cli
-      ansible_network_os: community.network.ce
+     ansible_connection: ansible.netcommon.network_cli
+     ansible_network_os: community.network.ce
     community.network.ce_config:
       parents:
         - bgp 65001
@@ -150,8 +169,8 @@
       lines:
         - import-route direct route-policy RP_DENY-CGNAT_DC
     tags: compliance
-    when:
-      - inventory_hostname == 'clab-ano__huawei-core01'
+    when: 
+      - inventory_hostname == 'SWCOR-11313-LAB'
 
 #  [Serve como base inicial para a próxima task (Config VRF FW-BORD CLIENTES)]
   - name: Create VRF [Temporario]
@@ -160,8 +179,8 @@
       description: By Ansible
       state: present
     tags: compliance
-    when:
-      - inventory_hostname == 'clab-ano__huawei-core01'
+    when: 
+      - inventory_hostname == 'SWCOR-11313-LAB'
 
 #  [Depende da task acima inicialmente]
   - name: Config VRF FW-BORD CLIENTES
@@ -171,7 +190,7 @@
       vrf_aftype: v4
       vpn_target_type: import_extcommunity
       vpn_target_value: "{{ vrf_attributes }}"
-      vpn_target_state: present
+      vpn_target_state: present 
     tags: compliance
-    when:
-      - inventory_hostname == 'clab-ano__huawei-core01'
+    when: 
+      - inventory_hostname == 'SWCOR-11313-LAB'
