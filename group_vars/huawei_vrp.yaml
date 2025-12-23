@@ -1,4 +1,5 @@
 ansible_connection: ansible.netcommon.netconf
 ansible_network_os: community.network.ce
 ansible_user: netdevops
-ansible_password: Netauto@2025 # Para Ansible Core, recomendado armazenar credenciais no Ansible VAULT!
+ansible_password: # ex: BTD@2025
+# Para Ansible Core, recomendado armazenar credenciais no Ansible VAULT!
