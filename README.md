@@ -11,4 +11,7 @@ Para utilização dos módulos contidos no playbook o equipamento deve suportar 
 - Inventário
 - Vars
 
+  
+<img width="1153" height="666" alt="full-logic topology" src="https://github.com/user-attachments/assets/eb18d995-7ec7-4826-93c8-7655802ee324" />
+
 
