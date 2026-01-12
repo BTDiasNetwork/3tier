@@ -5,26 +5,27 @@ all:
         ansible_network_os: junipernetworks.junos.junos
         ansible_connection: ansible.netcommon.netconf
       hosts:
-        SWACE-13720-lab:
+        SWACE-1-lab:
           ansible_host: 198.18.0.145
-        SWACE-13320-lab:
+        SWACE-2-lab:
           ansible_host: 198.18.0.146
-        SWDMZ-13328-lab:
+        SWDMZ-3-lab:
           ansible_host: 198.18.0.147
-        SWGER-13536-lab:
+        SWGER-4-lab:
           ansible_host: 198.18.0.148
     huawei:
       vars:
         ansible_connection: ansible.netcommon.netconf
         ansible_network_os: community.network.ce
       hosts:
-        SWCOR-11313-lab:
+        SWCOR-lab:
           ansible_host: 198.18.0.140
-        SWDST-10422-lab:
+        SWDST-1-lab:
           ansible_host: 198.18.0.141
-        SWDST-11438-lab:
+        SWDST-2-lab:
           ansible_host: 198.18.0.142
-        SWDST-10322-lab:
+        SWDST-3-lab:
           ansible_host: 198.18.0.143
-        SWDST-13824-lab:
+        SWDST-4-lab:
           ansible_host: 198.18.0.144
+
