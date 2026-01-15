@@ -2,3 +2,5 @@
 collections:
   - name: community.network
   - name: junipernetworks.junos
+
+# Collection community.network deprecated
